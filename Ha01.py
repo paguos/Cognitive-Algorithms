@@ -23,12 +23,14 @@ def task1():
     # pl.legend, pl.title, pl.xlabel, pl.ylabel
 
     fig, ax = pl.subplots()
-    ax.scatter(X[0,:],X[1,:],c='r')
-    ax.scatter(X2[0,:],X2[1,:],c='b')
-    ax.scatter(X3[0,:],X3[1,:],c='y')
+    ax.scatter(X[0,:],X[1,:],c='b')
+    ax.scatter(X2[0,:],X2[1,:],c='r')
+    ax.scatter(X3[0,:],X3[1,:],c='g')
     pl.hold(True)
-    pl.legend(['Generate Data','Scaled Data','Standardise Data'])
-    pl.title('Simple transformations of Gaussian Data')
+    pl.legend(['Raw Data','Scaled Data','Standardise Data'])
+    pl.xlabel('X')
+    pl.ylabel('Y')
+    pl.title('Simple trans. of Gaussian Data')
     pl.show()
 
     
@@ -59,9 +61,9 @@ def scale_data(X):
     
     '''
     # Your code here
-    a = X[0] * 2
-    b = X[1] / 2
-    Y = sp.array([a,b])
+    upper = X[0] * 2
+    lower = X[1] / 2
+    Y = sp.array([upper,lower])
     return Y
     
 def standardise_data(X):
@@ -77,12 +79,12 @@ def standardise_data(X):
     Instructions: Do not use for-loops. Use sp.mean and sp.std
     '''
     # Your code here
-    numRows = len(X)
-    numCols = len(X[0])
-    Y = sp.zeros((numRows, numCols))
+    rows = len(X)
+    columns = len(X[0])
+    Y = sp.zeros((rows, columns))
 
-    for i in range(numRows):
-        for j in range(numCols):
+    for i in range(rows):
+        for j in range(columns):
             Y[i][j] = (X[i][j] - sp.mean(X[i][:]))/sp.std(X[i][:])
     return Y
 
@@ -120,18 +122,18 @@ def mean_for(X):
     Do not use sp.mean or sp.sum
     '''
     # Your code here 
-    numrows = len(X)
-    numcols = len(X[0])
-    addition = 0
-    avg = 0
-    m = sp.zeros(numrows)
+    rows = len(X)
+    columns = len(X[0])
+    sum = 0
+    m = sp.zeros(rows)
 
-    for i in range(numrows):
-        for j in range(numcols):
-            addition += X[i,j]
-        avg = addition / numcols
+    for i in range(rows):
+        for j in range(columns):
+            sum += X[i,j]
+        avg = sum / columns
+        sum = 0
         m[i] = avg
-        addition = 0
+
 
     return m
 
@@ -166,4 +168,6 @@ def test_prep():
     print ('Tests passed')
 
 test_prep()
+task2()
 task1()
+
