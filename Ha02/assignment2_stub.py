@@ -1,4 +1,5 @@
 import scipy as sp
+import numpy as np
 import scipy.io as io
 import pdb
 import pylab as pl
@@ -44,13 +45,16 @@ def train_perceptron(X,Y,iterations=200,eta=.1):
         wrong = (sp.sign(weights.dot(X)) != Y).nonzero()[0]
         # compute accuracy acc[it]
         # ... your code here
+        acc[it] = 1. - float(wrong.shape[0])/float(X.shape[0])
         if wrong.shape[0] > 0:
             # pick a random misclassified data point
             # ... your code here
+            random = wrong[sp.random.randint(0,wrong.shape[0])]
             #update weight vector (use variable learning rate (eta/(1.+it)) )
             # ... your code here
+            weights += (eta/(1.+it) * X[:,random] * Y[random])
             if it % 20 == 0:
-                print ("Iteration %d:"%it + "Accuracy %0.2f" %acc[it])
+                print "Iteration %d:"%it + "Accuracy %0.2f" %acc[it]
     b = -weights[0] 
     w = weights[1:]
     #return weight vector, bias and accuracies
@@ -64,7 +68,18 @@ def train_ncc(X,Y):
     Output:      w       -  1D array of length D, weight vector  
                  b       -  bias term for linear classification                          
     '''
-    # ... your code here 
+    #Belonging to class
+    Y1 = sp.ones((X.shape[1])) == Y
+    w1 = (X.dot(Y1))/(Y1.nonzero()[0].shape[0])
+
+    #Not belonging to class
+    Y2 = sp.ones((X.shape[1])) != Y
+    w2 = (X.dot(Y2))/(Y2.nonzero()[0].shape[0])
+
+    #Results
+    w = (w1 - w2).T
+    b = 1./2. * (w1.T.dot(w1) - w2.T.dot(w2))
+    return w,b
 
 def plot_histogram(X, Y, w, b):
     ''' Plots a histogram of classifier outputs (w^T X) for each class with pl.hist 
@@ -78,7 +93,25 @@ def plot_histogram(X, Y, w, b):
                     b       -  bias term for linear classification   
     
     '''
-    # ... your code here   
+    # ... your code here
+
+    #Data:
+    output = (w.T.dot(X) - b)
+    wrong = (sp.sign(output) != Y).nonzero()[0]
+    correct = (sp.sign(output) == Y).nonzero()[0]
+
+    #Info:
+    acc = float(correct.shape[0])/float(output.shape[0]) * 100.
+    non_target = [output[i] for i in correct]
+    target = [output[i] for i in wrong]
+
+    #Plot:
+    pl.hist(non_target, bins = 10, histtype='bar',color='b', rwidth=0.4, label=['non-target'])
+    pl.hist(target, bins = 10, histtype='bar', color='g', rwidth=0.4, label=['target'])
+    pl.xlabel('w^T X')
+    pl.title('Acc %d'%acc +'%')
+    pl.legend()
+
 	
 def compare_classifiers(digit = 3):
     ''' Loads usps.mat data, trains the perceptron and the Nearest centroid classifiers, 
@@ -143,9 +176,15 @@ def plot_imgs(X, Y):
         pl.subplot(2,3,4+i)
         plot_img(X[:, m])
 
+
+#Task 1
 data = load_usps_data('usps.mat')
+x = data[0]
+y = data[1]
+plot_imgs(x, y)
 
-pl
+#Task 2
+analyse_accuracies_perceptron()
 
-
-
+#Task3,4,5
+compare_classifiers()
