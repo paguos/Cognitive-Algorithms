@@ -1,3 +1,6 @@
+# Omaira Hernandez 349805
+# Pablo Osinaga 347917
+# Isable Rintanen 349820
 import scipy as sp
 import numpy as np
 import scipy.io as io
